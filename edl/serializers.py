@@ -1,12 +1,17 @@
 from rest_framework import serializers
 from .models import Edl, EdlEntry
-import validators
+import validators, re
 
 
 class EdlSerializer(serializers.ModelSerializer):
     class Meta:
         model = Edl
         fields = ['id', 'name', 'description', 'edl_type', 'created']
+
+    def validate_name(self, value):
+        if not re.match("^[A-Za-z0-9_]*$", value):
+            raise serializers.ValidationError('Name can only contain alphanumeric and underscores characters')
+        return value
 
 
 class EdlEntrySerializer(serializers.ModelSerializer):

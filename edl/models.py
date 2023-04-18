@@ -9,7 +9,7 @@ EDL_TYPE_CHOICES = [
 
 
 class Edl(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     description = models.TextField()
     edl_type = models.CharField(max_length=20, choices=EDL_TYPE_CHOICES)
     created = models.DateTimeField(auto_now_add=True)
