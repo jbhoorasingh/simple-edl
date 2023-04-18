@@ -35,18 +35,18 @@ class ViewEdlDetail(APIView):
     """
     Operations for a specific External Dynamic List entry by ID.
     """
-    def get(self, request, id):
+    def get(self, request, name):
         try:
-            edl = Edl.objects.get(pk=id)
+            edl = Edl.objects.get(name=name)
         except Edl.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         serializer = EdlSerializer(edl)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def put(self, request, id):
+    def put(self, request, name):
         try:
-            edl = Edl.objects.get(pk=id)
+            edl = Edl.objects.get(name=name)
         except Edl.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -56,9 +56,9 @@ class ViewEdlDetail(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, id):
+    def delete(self, request, name):
         try:
-            edl = Edl.objects.get(pk=id)
+            edl = Edl.objects.get(name=name)
         except Edl.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -70,23 +70,23 @@ class ViewEdlEntries(APIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = EdlEntrySerializer
 
-    def get(self, request, edl_id):
+    def get(self, request, name):
         try:
-            edl = Edl.objects.get(pk=edl_id)
+            edl = Edl.objects.get(name=name)
         except Edl.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         serializer = EdlEntrySerializer(edl.entries, many=True)
         return Response(serializer.data)
 
-    def post(self, request, edl_id):
+    def post(self, request, name):
         try:
-            edl = Edl.objects.get(pk=edl_id)
+            edl = Edl.objects.get(name=name)
         except Edl.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         data = request.data
-        data["edl"] = edl_id
+        data["edl"] = edl.id
         serializer = EdlEntrySerializer(data=data)
         if serializer.is_valid():
             serializer.save()
