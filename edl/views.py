@@ -90,7 +90,7 @@ class ViewEdlEntries(APIView):
         # Check if EdlEntry existed
         try:
             edl_entry = EdlEntry.objects.get(entry_value=data['entry_value'], edl_id=edl.id)
-        except Edl.DoesNotExist:
+        except EdlEntry.DoesNotExist:
             # Edl Entry does not exist, creating new entry
             serializer = EdlEntrySerializer(data=data)
             if serializer.is_valid():
@@ -116,6 +116,6 @@ class ViewEdlEntriesPaFmt(APIView):
         output_string = ""
         print(edl.entries.all())
         for entry in edl.entries.all():
-            output_string = entry.entry_value + "\n"
+            output_string += entry.entry_value + "\n"
         return HttpResponse(output_string, content_type="text/plain")
 
