@@ -107,9 +107,9 @@ class ViewEdlEntries(APIView):
 
 
 class ViewEdlEntriesPaFmt(APIView):
-    def get(self, request, edl_id):
+    def get(self, request, name):
         try:
-            edl = Edl.objects.get(pk=edl_id)
+            edl = Edl.objects.get(name=name)
         except Edl.DoesNotExist:
             return HttpResponse("list_does_not_exist", content_type="text/plain")
 
