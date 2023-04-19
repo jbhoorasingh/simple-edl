@@ -87,11 +87,23 @@ class ViewEdlEntries(APIView):
 
         data = request.data
         data["edl"] = edl.id
-        serializer = EdlEntrySerializer(data=data)
+        # Check if EdlEntry existed
+        try:
+            edl_entry = EdlEntry.objects.get(entry_value=data['entry_value'], edl_id=edl.id)
+        except Edl.DoesNotExist:
+            # Edl Entry does not exist, creating new entry
+            serializer = EdlEntrySerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Updating old entry, instead of creating new
+        serializer = EdlEntrySerializer(edl_entry, data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class ViewEdlEntriesPaFmt(APIView):
