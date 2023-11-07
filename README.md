@@ -19,7 +19,7 @@ I decided to create this EDL toolkit because:
 ## Quick Start: Development
 ```shell
 # Clone repo
-git clone urlHere
+git clone https://github.com/jbhoorasingh/simple-edl.git
 
 # Set up python environment
 python -m venv venv
@@ -43,4 +43,4 @@ python manage.py createsuperuser
 
 
 ## Acknowledgements
-Dockerize Django Guide - https://blog.logrocket.com/dockerizing-django-app/
+Dockerize Django Guide [TODO] - https://blog.logrocket.com/dockerizing-django-app/
