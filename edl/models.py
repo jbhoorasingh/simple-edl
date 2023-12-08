@@ -3,7 +3,7 @@ from django.db import models
 
 EDL_TYPE_CHOICES = [
     ('url', 'URL'),
-    ('domain', 'Domain'),
+    ('fqdn', 'FQDN'),
     ('ip_address', 'IP Address')
 ]
 
