@@ -30,7 +30,7 @@ class EdlEntrySerializer(serializers.ModelSerializer):
         if data["edl"].edl_type == 'url':
             if not validators.url(data['entry_value']):
                 raise serializers.ValidationError("entry_value is not a valid url")
-        if data["edl"].edl_type == 'domain':
+        if data["edl"].edl_type == 'fqdn':
             if not validators.domain(data['entry_value']):
-                raise serializers.ValidationError("entry_value is not a valid ipv4 domain")
+                raise serializers.ValidationError("entry_value is not a valid fqdn")
         return data
