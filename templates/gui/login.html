@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-white">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple EDL</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.0.2/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+</head>
+<body class="h-full">
+<!--
+  This example requires updating your template:
+
+  ```
+  <html class="h-full bg-white">
+  <body class="h-full">
+  ```
+-->
+<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+        <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+             alt="Your Company">
+        <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in</h2>
+    </div>
+
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+
+        <form class="space-y-6" method="post">
+            {% csrf_token %}
+            <div class="block text-red-100 text-sm bg-red-600 p-1 rounded-md">{{ form.non_field_errors }}</div>
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}"
+                           class="block text-sm font-medium leading-6 text-gray-900">{{ field.label }}</label>
+                    {% if field.id_for_label == 'id_password' %}<div class="error">{{ form.password.errors }}</div> {% endif %}
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <div>
+                <button type="submit"
+                        class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    Sign in
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+</body>
+</html>

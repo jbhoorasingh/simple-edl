@@ -1,0 +1,55 @@
+{% extends '_layout/main.html' %}
+
+
+{% block body %}
+    <div id="vue-app">
+        <ul role="list" class="divide-y divide-gray-100">
+
+            <li v-for="item in items" :key="item.id" class="flex justify-between gap-x-6 py-5">
+
+
+                {% verbatim %}
+                <div class="flex min-w-0 gap-x-4">
+                    <span class="h-12 w-12 flex-none rounded-full bg-gray-50">
+                        {{ item.id }}
+                    </span>
+                    <div class="min-w-0 flex-auto">
+                        <a :href="item.name"><p class="text-sm font-semibold leading-6 text-gray-900">{{ item.name }}</p></a>
+                        <p class="mt-1 truncate text-xs leading-5 text-gray-500">{{ item.description }}</p>
+                    </div>
+                </div>
+                <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+                    <p class="text-sm leading-6 text-gray-900">{{ item.edl_type }}</p>
+                    <p class="mt-1 text-xs leading-5 text-gray-500">
+                        <time datetime="2023-01-23T13:23Z">{{ item.created }}</time>
+                    </p>
+                </div>
+                {% endverbatim %}
+
+            </li>
+        </ul>
+
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#vue-app',
+            data: {
+                items: []
+            },
+            created() {
+                this.fetchData();
+            },
+            methods: {
+                fetchData() {
+                    fetch('/api/edl')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.items = data;
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
+            }
+        });
+    </script>
+{% endblock %}
