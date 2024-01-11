@@ -8,18 +8,18 @@
   <div class="mb-4 p-4 bg-white shadow rounded">
     <!-- Filter Section -->
     <div class="grid grid-cols-12 gap-4 items-center">
-      <input type="text" placeholder="Name" class="col-span-2 border p-1 text-sm rounded">
-      <input type="text" placeholder="Description" class="col-span-2 border p-1 text-sm rounded">
-      <select class="col-span-2 border p-1 text-sm rounded">
+      <input v-model="filters.list_name"  type="text" placeholder="Name" class="col-span-2 border p-1 text-sm rounded">
+      <input v-model="filters.list_description"  type="text" placeholder="Description" class="col-span-2 border p-1 text-sm rounded">
+      <select v-model="filters.list_type"  class="col-span-2 border p-1 text-sm rounded">
         <option></option>
         <option>ip_address</option>
         <option>fqdn</option>
         <option>url</option>
         <!-- Add more options here -->
       </select>
-      <input type="text" placeholder="Start Date" onfocus="(this.type='datetime-local')" class="col-span-2 border p-1 text-sm rounded">
-      <input type="text" placeholder="End Date" onfocus="(this.type='datetime-local')" class="col-span-2 border p-1 text-sm rounded">
-      <button class="col-span-2 bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+      <input type="text" placeholder="Start Date" v-model="filters.created_range_start" onfocus="(this.type='datetime-local')" class="col-span-2 border p-1 text-sm rounded">
+      <input type="text" placeholder="End Date" v-model="filters.created_range_end" onfocus="(this.type='datetime-local')" class="col-span-2 border p-1 text-sm rounded">
+      <button @click="fetchData" class="col-span-2 bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
         Filter
       </button>
     </div>
@@ -71,14 +71,23 @@
         var app = new Vue({
             el: '#vue-app',
             data: {
-                items: []
+                items: [],
+                filters: {
+                    list_name: '',
+                    list_type: '',
+                    list_description: '',
+                    created_range_start: '',
+                    created_range_end: ''
+                }
             },
             created() {
                 this.fetchData();
             },
             methods: {
+                
                 fetchData() {
-                    fetch('/api/edl')
+                    let queryParams = new URLSearchParams(this.filters).toString();
+                    fetch(`/api/edl?${queryParams}`)
                         .then(response => response.json())
                         .then(data => {
                             this.items = data;

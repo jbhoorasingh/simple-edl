@@ -3,10 +3,13 @@ from rest_framework.views import APIView
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 from rest_framework.parsers import JSONParser
 from .models import Edl, EdlEntry
 from .serializers import EdlSerializer, EdlEntrySerializer
-
+from datetime import datetime
+from urllib.parse import unquote
 
 class ListEdls(APIView):
     """
@@ -15,8 +18,110 @@ class ListEdls(APIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = EdlSerializer
 
+    @extend_schema(
+        request=[],
+        responses={200: EdlSerializer(many=True)},
+        parameters=[
+            OpenApiParameter(
+                name='list_name',
+                type=OpenApiTypes.STR,
+                description='Optional parameter for list_name filtering.',
+                required=False
+            ),
+            OpenApiParameter(
+                name='description',
+                type=OpenApiTypes.STR,
+                description='Optional parameter for description filtering.',
+                required=False
+            ),
+            OpenApiParameter(
+                name='list_type',
+                type=OpenApiTypes.STR,
+                description='Optional parameter for list_type filtering.',
+                required=False
+            ),
+            OpenApiParameter(
+                name='created_range_start',
+                type=OpenApiTypes.DATETIME,
+                description='Optional parameter for created_range_start filtering.',
+                required=False
+            ),
+            OpenApiParameter(
+                name='created_range_end',
+                type=OpenApiTypes.DATETIME,
+                description='Optional parameter for created_range_end filtering.',
+                required=False
+            ),
+        ]
+    )
     def get(self, request):
+        # Get query params
+        list_name = request.query_params.get('list_name')
+        list_description = request.query_params.get('list_description')
+        list_type = request.query_params.get('list_type')
+        created_range_start = request.query_params.get('created_range_start')
+        created_range_end = request.query_params.get('timestamp_end')
+
+        # Validate query params
+        if list_name:
+            if not isinstance(list_name, str):
+                return Response({'status': 'failed', 'message': 'list_name must be a string'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            # check if list_name is valid containing only letters, numbers, and underscores
+            if not list_name.isalnum() and not list_name.isalpha() and not list_name.isnumeric() and not list_name.isascii():
+                return Response(
+                    {'status': 'failed', 'message': 'list_name must contain only letters, numbers, and underscores'},
+                    status=status.HTTP_400_BAD_REQUEST)
+        if list_type:
+            if not isinstance(list_type, str):
+                return Response({'status': 'failed', 'message': 'list_type must be a string'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            # check if object_changed is valid containing only letters, numbers, and underscores
+            if not list_type.isalnum() and not list_type.isalpha() and not list_type.isnumeric() and not list_type.isascii():
+                return Response({'status': 'failed',
+                                 'message': 'list_type must contain only letters, numbers, and underscores'},
+                                status=status.HTTP_400_BAD_REQUEST)
+        if list_description:
+            if not isinstance(list_description, str):
+                return Response({'status': 'failed',
+                                 'message': 'list_description must be a string'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            # check if list_description is valid containing only letters, numbers, underscores, and spaces
+            if not list_description.isalnum() and not list_description.isalpha() and not list_description.isnumeric() and not list_description.isascii() and not list_description.isspace():
+                return Response({'status': 'failed',
+                                 'message': 'list_description must contain only letters, numbers, underscores, and spaces'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        if created_range_start:
+            try:
+                decoded_start = unquote(created_range_start)
+                created_range_start = datetime.strptime(decoded_start, '%Y-%m-%dT%H:%M')
+            except:
+                return Response(
+                    {'status': 'failed', 'message': 'created_range_start must be in format YYYY-MM-DDTHH:MM'},
+                    status=status.HTTP_400_BAD_REQUEST)
+        if created_range_end:
+            try:
+                decoded_end = unquote(created_range_start)
+                created_range_end = datetime.strptime(decoded_end, '%Y-%m-%dT%H:%M')
+            except:
+                return Response(
+                    {'status': 'failed', 'message': 'created_range_end must be in format YYYY-MM-DDTHH:MM'},
+                    status=status.HTTP_400_BAD_REQUEST)
+
         edls = Edl.objects.all()
+
+        if list_name:
+            edls = edls.filter(name__icontains=list_name)
+        if list_type:
+            edls = edls.filter(edl_type=list_type)
+        if list_description:
+            edls = edls.filter(description__icontains=list_description)
+        if created_range_start:
+            edls = edls.filter(created__gte=created_range_start)
+        if created_range_end:
+            edls = edls.filter(created__lte=created_range_end)
+
         serializer = EdlSerializer(edls, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
