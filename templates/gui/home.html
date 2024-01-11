@@ -3,31 +3,67 @@
 
 {% block body %}
     <div id="vue-app">
-        <ul role="list" class="divide-y divide-gray-100">
+        <div class="container mx-auto mt-5">
+            
+  <div class="mb-4 p-4 bg-white shadow rounded">
+    <!-- Filter Section -->
+    <div class="grid grid-cols-12 gap-4 items-center">
+      <input type="text" placeholder="Name" class="col-span-2 border p-1 text-sm rounded">
+      <input type="text" placeholder="Description" class="col-span-2 border p-1 text-sm rounded">
+      <select class="col-span-2 border p-1 text-sm rounded">
+        <option></option>
+        <option>ip_address</option>
+        <option>fqdn</option>
+        <option>url</option>
+        <!-- Add more options here -->
+      </select>
+      <input type="text" placeholder="Start Date" onfocus="(this.type='datetime-local')" class="col-span-2 border p-1 text-sm rounded">
+      <input type="text" placeholder="End Date" onfocus="(this.type='datetime-local')" class="col-span-2 border p-1 text-sm rounded">
+      <button class="col-span-2 bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+        Filter
+      </button>
+    </div>
+  </div>
+            
+            
+            
+            
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <ul class="divide-y divide-gray-200">
+                    <!-- Repeat this `li` for each list item -->
+                    <li v-for="item in items" :key="item.id" class="block hover:bg-gray-50">
+                        {% verbatim %}
+                        <a :href="item.name"  class="flex items-center px-6 py-4">
+                            
+                            <div class="flex-1 min-w-0 pr-4">
+                                <p class="text-sm font-medium text-gray-900 truncate">
+                                    {{ item.name }}
+                                </p>
+                                <p class="text-sm text-gray-500 truncate">
+                                    {{ item.description }}
+                                </p>
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                <p class="hidden sm:block">
+                                    {{ item.edl_type }}
+                                </p>
+                                <p>
+                                    {{ item.created }}
+                                </p>
+                            </div>
+                            <!-- Chevron icon from Heroicons (ensure you have the heroicons library included) -->
+                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                        {% endverbatim %}
+                    </li>
+                    <!-- Repeat ends -->
+                </ul>
+            </div>
+        </div>
 
-            <li v-for="item in items" :key="item.id" class="flex justify-between gap-x-6 py-5">
-
-
-                {% verbatim %}
-                <div class="flex min-w-0 gap-x-4">
-                    <span class="h-12 w-12 flex-none rounded-full bg-gray-50">
-                        {{ item.id }}
-                    </span>
-                    <div class="min-w-0 flex-auto">
-                        <a :href="item.name"><p class="text-sm font-semibold leading-6 text-gray-900">{{ item.name }}</p></a>
-                        <p class="mt-1 truncate text-xs leading-5 text-gray-500">{{ item.description }}</p>
-                    </div>
-                </div>
-                <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-                    <p class="text-sm leading-6 text-gray-900">{{ item.edl_type }}</p>
-                    <p class="mt-1 text-xs leading-5 text-gray-500">
-                        <time datetime="2023-01-23T13:23Z">{{ item.created }}</time>
-                    </p>
-                </div>
-                {% endverbatim %}
-
-            </li>
-        </ul>
 
     </div>
 
