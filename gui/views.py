@@ -12,6 +12,17 @@ def gui_home(request):
                    'current_page_title': current_page_title})
 
 
+def gui_edl_detail(request, list_name):
+    current_page = 'list_details'
+    current_page_title = 'EDL Detail: {}'.format(list_name)
+    edl_name = list_name
+    return render(request, 'gui/edl_details.html',
+                  {
+                      'current_page': current_page,
+                      'current_page_title': current_page_title,
+                      'edl_name': list_name
+                  })
+
 # @login_required(login_url='/gui/login/')
 # def gui_list_edl(request):
 #     current_page = 'gui_list_edl'

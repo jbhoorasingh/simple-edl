@@ -1,0 +1,388 @@
+{% extends '_layout/main.html' %}
+
+
+{% block body %}
+    <div id="vue-app">
+        {% verbatim %}
+        <!-- Main container -->
+        <div class="container mx-auto p-6">
+
+            <!-- First Row: EDL Details Panel -->
+            <div class="mb-6 bg-white shadow rounded-lg p-6">
+                <div class="mb-4">
+                    <div class="px-4 sm:px-0">
+                        <h3 class="text-base font-semibold leading-7 text-gray-900">{{ edlDetail.name }}</h3>
+                        <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">{{ edlDetail.description }}</p>
+                    </div>
+                    <div class="mt-6 border-t border-gray-100">
+                        <dl class="divide-y divide-gray-100">
+                            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                <dt class="text-sm font-medium leading-6 text-gray-900">Type</dt>
+                                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                                    {{ edlDetail.edl_type }}
+                                </dd>
+                            </div>
+                            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                <dt class="text-sm font-medium leading-6 text-gray-900">Created</dt>
+                                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                                    {{ edlDetail.created }}
+                                </dd>
+                            </div>
+                            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                <dt class="text-sm font-medium leading-6 text-gray-900">Flat URL</dt>
+                                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                                    <a :href="'/api/edl/' + edlDetail.name + '/flat'" target="_blank">/api/edl/{{
+                                        edlDetail.name }}/flat</a>
+                                </dd>
+                            </div>
+                            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                <dt class="text-sm font-medium leading-6 text-gray-900">Helper Scripts</dt>
+                                <dd class="mt-2 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                                    <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
+                                        <li class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
+                                            <div class="flex w-0 flex-1 items-center">
+                                                <svg class="h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20"
+                                                     fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd"
+                                                          d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243h.001l.497-.5a.75.75 0 011.064 1.057l-.498.501-.002.002a4.5 4.5 0 01-6.364-6.364l7-7a4.5 4.5 0 016.368 6.36l-3.455 3.553A2.625 2.625 0 119.52 9.52l3.45-3.451a.75.75 0 111.061 1.06l-3.45 3.451a1.125 1.125 0 001.587 1.595l3.454-3.553a3 3 0 000-4.242z"
+                                                          clip-rule="evenodd"/>
+                                                </svg>
+                                                <div class="ml-4 flex min-w-0 flex-1 gap-2">
+                                                    <span class="truncate font-medium">python_update_list.py</span>
+                                                    <span class="flex-shrink-0 text-gray-400">2.4mb</span>
+                                                </div>
+                                            </div>
+                                            <div class="ml-4 flex-shrink-0">
+                                                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Download</a>
+                                            </div>
+                                        </li>
+                                        <li class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
+                                            <div class="flex w-0 flex-1 items-center">
+                                                <svg class="h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20"
+                                                     fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd"
+                                                          d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243h.001l.497-.5a.75.75 0 011.064 1.057l-.498.501-.002.002a4.5 4.5 0 01-6.364-6.364l7-7a4.5 4.5 0 016.368 6.36l-3.455 3.553A2.625 2.625 0 119.52 9.52l3.45-3.451a.75.75 0 111.061 1.06l-3.45 3.451a1.125 1.125 0 001.587 1.595l3.454-3.553a3 3 0 000-4.242z"
+                                                          clip-rule="evenodd"/>
+                                                </svg>
+                                                <div class="ml-4 flex min-w-0 flex-1 gap-2">
+                                                    <span class="truncate font-medium">powershell_update_list.ps1</span>
+                                                    <span class="flex-shrink-0 text-gray-400">4.5mb</span>
+                                                </div>
+                                            </div>
+                                            <div class="ml-4 flex-shrink-0">
+                                                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Download</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Row: Entries and Logs Panels -->
+            <div class="grid md:grid-cols-2 gap-6">
+
+                <!-- Entries Panel -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <div class="flex justify-between items-center mb-4">
+
+                        <!-- Add Entry Button -->
+
+                        <!---------->
+                        <div class="grid grid-cols-12 gap-4 items-center float-right">
+                            <h2 class="text-xl font-semibold col-span-3 ">Entries</h2>
+                            <input v-model="filters.list_name" type="text" placeholder="Search by Entry Value"
+                                   class="col-span-4 border p-1 text-sm rounded">
+
+
+                            <button
+                                    class="col-span-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold py-1 px-4 rounded">
+                                Filter
+                            </button>
+
+                            <button @click="showModal = true"
+                                    class="col-span-3 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold py-1 px-4 rounded">
+                                Add Entry
+                            </button>
+                        </div>
+                        <!---------->
+                    </div>
+                    <ul>
+                        <!-- Replace with a loop for actual entries -->
+
+                        <li v-for="item in edlEntries" :key="item.id" class="block hover:bg-gray-50">
+
+                            <div class="flex items-center mt-2 border-t border-gray-100">
+
+                                <div class="flex-1 min-w-0 pr-4">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        {{ item.entry_value }}
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate">
+
+                                    </p>
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    <p class="hidden sm:block">
+                                        added: {{ item.created }}
+                                    </p>
+                                    <p>
+                                        until: {{ item.valid_until }}
+                                    </p>
+                                </div>
+                            </div>
+
+                        </li>
+
+                        <!-- ... -->
+                    </ul>
+                </div>
+
+                <!-- Logs Panel -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-xl font-semibold mb-2">Logs</h2>
+                    <ul>
+                        <!-- Replace with a loop for actual logs -->
+                        <li>Log 1</li>
+                        <li>Log 2</li>
+                        <!-- ... -->
+                    </ul>
+                </div>
+
+            </div>
+
+        </div><!-- End of Main Container -->
+        {% endverbatim %}
+
+        <div v-if="showModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+             id="my-modal">
+            <!-- Modal content -->
+            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                <div class="mt-3">
+                    <!-- Your form and content here -->
+                    <h2 class="text-base font-semibold leading-7 text-gray-900">Add Entry to Dynamic List</h2>
+
+
+                    <!-- FORM -->
+
+
+                    <div class="border-b border-gray-900/10 pb-12">
+
+                        <!-- Errors -->
+                        <div v-if="newEntryErrors.length"
+                             class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+                             role="alert">
+                            {% verbatim %}
+                            <strong class="font-bold">There were {{ newEntryErrors.length }} errors with your
+                                submission</strong>
+                            <ul>
+                                <li v-for="error in newEntryErrors">{{ error }}</li>
+                            </ul>
+                            {% endverbatim %}
+                        </div>
+                        <!-- Errors -->
+
+                        <div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                            <div class="sm:col-span-6">
+                                <label for="name"
+                                       class="block text-sm font-medium leading-6 text-gray-900">Entry</label>
+                                <div class="mt-2">
+
+                                    <input v-model="newEntry.entry_value" type="text" name="name" id="name" autocomplete="name"
+                                           placeholder="edl_name_123" class="col-span-2 border p-1 text-sm rounded">
+
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-6">
+                                <label for="valid_until"
+                                       class="block text-sm font-medium leading-6 text-gray-900">Valid Until</label>
+                                <div class="mt-2">
+                                    <input type="text" placeholder="Start Date" v-model="newEntry.valid_until"
+                           onfocus="(this.type='datetime-local')" class="col-span-2 border p-1 text-sm rounded">
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+                    <!-- FORM -->
+
+
+                    <!-- Close Modal Button -->
+                    <div class="mt-6 flex items-center justify-end gap-x-6">
+                        <button @click="showModal = false" type="button"
+                                class="text-sm font-semibold leading-6 text-gray-900">Cancel
+                        </button>
+                        <button  @click="addNewEDLEntry" type="submit"
+                                class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                class="col-span-2 bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- End of Vue App -->
+
+    <script>
+        var app = new Vue({
+            el: '#vue-app',
+            data: {
+                edlEntries: [],
+                showModal: false,
+                edlName: '{{ edl_name }}',
+                edlDetail: {},
+                newEntryErrors: [],
+                newEntry: {
+                    entry_value: '',
+                    valid_until: '2045-01-01T00:00',
+                    edl: null
+                },
+                filters: {
+                    list_name: '',
+                    list_type: '',
+                    list_description: '',
+                    created_range_start: '',
+                    created_range_end: ''
+                }
+            },
+            created() {
+                this.fetchEdl();
+                this.fetchEdlEntries();
+            },
+            methods: {
+
+                fetchEdl() {
+
+                    console.log(this.edlName)
+                    fetch(`/api/edl/${this.edlName}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.edlDetail = data;
+                            //console.log(data);
+                        })
+                        .catch(error => console.error('Error EDL:', error));
+                },
+                fetchEdlEntries() {
+
+                    console.log(this.edlName)
+                    fetch(`/api/edl/${this.edlName}/entries`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.edlEntries = data;
+                        })
+                        .catch(error => console.error('Error Fetching EDL Entries:', error));
+                },
+                getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        let cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            let cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                },
+                async addNewEDL() {
+                    let csrfToken = this.getCookie('csrftoken');
+                    // Clear the errors
+                    this.newListErrors = [];
+                    try {
+                        const response = await fetch('/api/edl/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken,
+                            },
+                            body: JSON.stringify(this.newList),
+                        });
+
+                        if (response.ok && response.status === 201) {
+                            // If status is 201, the item was created successfully
+                            // this.newListErrors.push(`EDL created successfully`);
+                            this.showModal = false;
+                            this.fetchData();
+                            // Clear the form here if needed
+                            this.newList = {name: '', edl_type: '', description: ''};
+                        } else if (response.status === 400) {
+                            // If status is 400, extract the errors for each field
+                            const errors = await response.json(); // Make sure to await the JSON parsing
+                            for (const key in errors) {
+                                errors[key].forEach(err => {
+                                    this.newListErrors.push(`${key} - ${err}`);
+                                });
+                            }
+                        } else if (response.status === 403) {
+                            // If status is 403, add an unauthorized error
+                            this.newListErrors.push('Unauthorized for this action');
+                        } else if (response.status === 401) {
+                            // If status is 401, add an unauthorized error
+                            this.newListErrors.push('Unauthenticated');
+                        } else {
+                            // For any other status code, add a generic API issue error
+                            this.newListErrors.push('Generic API issue');
+                        }
+                    } catch (error) {
+                        // If there is an error in the request itself, like network issues
+                        this.newListErrors.push('Network error or API is down');
+                        console.error('Error during fetch:', error);
+                    }
+                },
+                async addNewEDLEntry() {
+                    let csrfToken = this.getCookie('csrftoken');
+                    // Clear the errors
+                    this.newListErrors = [];
+                    try {
+                        const response = await fetch(`/api/edl/${this.edlName}/entries`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken,
+                            },
+                            body: JSON.stringify(this.newEntry),
+                        });
+
+                        if (response.ok && response.status === 201) {
+                            // If status is 201, the item was created successfully
+                            // this.newListErrors.push(`EDL created successfully`);
+                            this.showModal = false;
+                            this.fetchData();
+                            // Clear the form here if needed
+                            this. newEntry= {entry_value: '', valid_until: '', edl: null};
+                        } else if (response.status === 400) {
+                            // If status is 400, extract the errors for each field
+                            const errors = await response.json(); // Make sure to await the JSON parsing
+                            for (const key in errors) {
+                                errors[key].forEach(err => {
+                                    this.newEntryErrors.push(`${key} - ${err}`);
+                                });
+                            }
+                        } else if (response.status === 403) {
+                            // If status is 403, add an unauthorized error
+                            this.newEntryErrors.push('Unauthorized for this action');
+                        } else if (response.status === 401) {
+                            // If status is 401, add an unauthorized error
+                            this.newEntryErrors.push('Unauthenticated');
+                        } else {
+                            // For any other status code, add a generic API issue error
+                            this.newEntryErrors.push('Generic API issue');
+                        }
+                    } catch (error) {
+                        // If there is an error in the request itself, like network issues
+                        this.newEntryErrors.push('Network error or API is down');
+                        console.error('Error during fetch:', error);
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}
