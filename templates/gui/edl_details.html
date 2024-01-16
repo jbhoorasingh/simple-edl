@@ -126,10 +126,10 @@
                                 </div>
                                 <div class="text-sm text-gray-500">
                                     <p class="hidden sm:block">
-                                        added: {{ item.created }}
+                                        added {{ formatTimeDifference(item).created }}
                                     </p>
                                     <p>
-                                        until: {{ item.valid_until }}
+                                        valid for {{ formatTimeDifference(item).validUntil }}
                                     </p>
                                 </div>
                             </div>
@@ -190,7 +190,8 @@
                                        class="block text-sm font-medium leading-6 text-gray-900">Entry</label>
                                 <div class="mt-2">
 
-                                    <input v-model="newEntry.entry_value" type="text" name="name" id="name" autocomplete="name"
+                                    <input v-model="newEntry.entry_value" type="text" name="name" id="name"
+                                           autocomplete="name"
                                            placeholder="edl_name_123" class="col-span-2 border p-1 text-sm rounded">
 
                                 </div>
@@ -201,7 +202,8 @@
                                        class="block text-sm font-medium leading-6 text-gray-900">Valid Until</label>
                                 <div class="mt-2">
                                     <input type="text" placeholder="Start Date" v-model="newEntry.valid_until"
-                           onfocus="(this.type='datetime-local')" class="col-span-2 border p-1 text-sm rounded">
+                                           onfocus="(this.type='datetime-local')"
+                                           class="col-span-2 border p-1 text-sm rounded">
                                 </div>
                             </div>
 
@@ -218,7 +220,7 @@
                         <button @click="showModal = false" type="button"
                                 class="text-sm font-semibold leading-6 text-gray-900">Cancel
                         </button>
-                        <button  @click="addNewEDLEntry" type="submit"
+                        <button @click="addNewEDLEntry" type="submit"
                                 class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 class="col-span-2 bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
                             Save
@@ -292,6 +294,34 @@
                     }
                     return cookieValue;
                 },
+                formatTimeDifference(entry) {
+                    const now = new Date();
+                    const created = new Date(entry.created);
+                    const validUntil = new Date(entry.valid_until);
+
+                    const createdDiff = Math.floor((now - created) / 1000); // difference in seconds
+                    const validUntilDiff = Math.floor((validUntil - now) / 1000); // difference in seconds
+
+                    // Helper function to format the time difference
+                    function format(diff) {
+                        const days = Math.floor(diff / (24 * 60 * 60));
+                        const months = Math.floor(days / 30);
+                        const years = Math.floor(days / 365);
+                        if (years) return `${years} year${years > 1 ? 's' : ''} ago`;
+                        if (months) return `${months} month${months > 1 ? 's' : ''} ago`;
+                        if (days) return `${days} day${days > 1 ? 's' : ''} ago`;
+                        const hours = Math.floor(diff / (60 * 60));
+                        if (hours) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+                        const minutes = Math.floor(diff / 60);
+                        if (minutes) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+                        return 'just now';
+                    }
+
+                    return {
+                        created: format(createdDiff),
+                        validUntil: format(validUntilDiff)
+                    };
+                },
                 async addNewEDL() {
                     let csrfToken = this.getCookie('csrftoken');
                     // Clear the errors
@@ -357,7 +387,7 @@
                             this.showModal = false;
                             this.fetchData();
                             // Clear the form here if needed
-                            this. newEntry= {entry_value: '', valid_until: '', edl: null};
+                            this.newEntry = {entry_value: '', valid_until: '', edl: null};
                         } else if (response.status === 400) {
                             // If status is 400, extract the errors for each field
                             const errors = await response.json(); // Make sure to await the JSON parsing
