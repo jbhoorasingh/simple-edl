@@ -19,6 +19,6 @@ from .views import ListEdls, ViewEdlDetail, ViewEdlEntries, ViewEdlEntriesPaFmt
 urlpatterns = [
     path('', ListEdls.as_view()),
     path('<str:name>', ViewEdlDetail.as_view()),
-    path('<str:name>/entries', ViewEdlEntries.as_view()),
-    path('<str:name>/flat', ViewEdlEntriesPaFmt.as_view()),
+    path('<str:edl_name>/entries', ViewEdlEntries.as_view()),
+    path('<str:edl_name>/flat', ViewEdlEntriesPaFmt.as_view()),
 ]

@@ -93,11 +93,11 @@
                         <!---------->
                         <div class="grid grid-cols-12 gap-4 items-center float-right">
                             <h2 class="text-xl font-semibold col-span-3 ">Entries</h2>
-                            <input v-model="filters.list_name" type="text" placeholder="Search by Entry Value"
+                            <input v-model="edlEntriesfilters.entry_value" type="text" placeholder="Search by Entry Value"
                                    class="col-span-4 border p-1 text-sm rounded">
 
 
-                            <button
+                            <button @click="fetchEdlEntries"
                                     class="col-span-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold py-1 px-4 rounded">
                                 Filter
                             </button>
@@ -245,12 +245,8 @@
                     valid_until: '2045-01-01T00:00',
                     edl: null
                 },
-                filters: {
-                    list_name: '',
-                    list_type: '',
-                    list_description: '',
-                    created_range_start: '',
-                    created_range_end: ''
+                edlEntriesfilters: {
+                    entry_value: ''
                 }
             },
             created() {
@@ -260,8 +256,7 @@
             methods: {
 
                 fetchEdl() {
-
-                    console.log(this.edlName)
+                    // We are going to use the Fetch API to fetch the data for the  EDL
                     fetch(`/api/edl/${this.edlName}`)
                         .then(response => response.json())
                         .then(data => {
@@ -271,9 +266,9 @@
                         .catch(error => console.error('Error EDL:', error));
                 },
                 fetchEdlEntries() {
-
-                    console.log(this.edlName)
-                    fetch(`/api/edl/${this.edlName}/entries`)
+                    let queryParams = new URLSearchParams(this.edlEntriesfilters).toString();
+                    console.log(`/api/edl/${this.edlName}/entries?${queryParams}`)
+                    fetch(`/api/edl/${this.edlName}/entries?${queryParams}`)
                         .then(response => response.json())
                         .then(data => {
                             this.edlEntries = data;
@@ -340,7 +335,7 @@
                             // If status is 201, the item was created successfully
                             // this.newListErrors.push(`EDL created successfully`);
                             this.showModal = false;
-                            this.fetchData();
+                            this.fetchEdlEntries();
                             // Clear the form here if needed
                             this.newList = {name: '', edl_type: '', description: ''};
                         } else if (response.status === 400) {
@@ -385,8 +380,11 @@
                             // If status is 201, the item was created successfully
                             // this.newListErrors.push(`EDL created successfully`);
                             this.showModal = false;
-                            this.fetchData();
-                            // Clear the form here if needed
+                            this.fetchEdlEntries();
+                            // Clear the form
+                            this.newEntry = {entry_value: '', valid_until: '2045-01-01T00:00', edl: null};
+                            // Clear errors
+                            this.newEntryErrors = [];
                             this.newEntry = {entry_value: '', valid_until: '', edl: null};
                         } else if (response.status === 400) {
                             // If status is 400, extract the errors for each field

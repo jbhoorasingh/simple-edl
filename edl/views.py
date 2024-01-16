@@ -175,13 +175,46 @@ class ViewEdlEntries(APIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = EdlEntrySerializer
 
-    def get(self, request, name):
+    # DRF Spectacular Schema
+    @extend_schema(
+        request=[],
+        responses={200: EdlEntrySerializer(many=True)},
+        parameters=[
+            OpenApiParameter(
+                name='entry',
+                type=OpenApiTypes.STR,
+                description='Optional parameter for entry filtering.',
+                required=False
+            ),
+        ]
+    )
+    def get(self, request, edl_name):
+
         try:
-            edl = Edl.objects.get(name=name)
+            edl = Edl.objects.get(name=edl_name)
         except Edl.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        serializer = EdlEntrySerializer(edl.entries, many=True)
+        # Get all entries for this edl
+        entries = EdlEntry.objects.filter(edl=edl).order_by('-created')
+
+        # Filter entries by entry
+        entry = request.query_params.get('entry_value')
+        # Validate query params
+        if entry:
+            if not isinstance(entry, str):
+                return Response({'status': 'failed', 'message': 'entry must be a string'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            # check if message is valid containing only letters, numbers, underscores, and spaces
+            if not entry.isalnum() and not entry.isalpha() and not entry.isnumeric() and not entry.isascii():
+                return Response({'status': 'failed',
+                                 'message': 'entry must contain only letters, numbers, underscores'},
+                                status=status.HTTP_400_BAD_REQUEST)
+        if entry:
+            entries = entries.filter(entry_value__icontains=entry)
+
+        serializer = EdlEntrySerializer(entries, many=True)
+
         return Response(serializer.data)
 
     def post(self, request, name):
@@ -212,9 +245,9 @@ class ViewEdlEntries(APIView):
 
 
 class ViewEdlEntriesPaFmt(APIView):
-    def get(self, request, name):
+    def get(self, request, edl_name):
         try:
-            edl = Edl.objects.get(name=name)
+            edl = Edl.objects.get(name=edl_name)
         except Edl.DoesNotExist:
             return HttpResponse("list_does_not_exist", content_type="text/plain")
 
