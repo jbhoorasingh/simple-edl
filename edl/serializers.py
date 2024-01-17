@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Edl, EdlEntry
+from .models import Edl, EdlEntry, EdlLog
 import validators, re
 
 
@@ -34,3 +34,8 @@ class EdlEntrySerializer(serializers.ModelSerializer):
             if not validators.domain(data['entry_value']):
                 raise serializers.ValidationError("entry_value is not a valid fqdn")
         return data
+
+class EdlLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EdlLog
+        fields = ['id', 'timestamp', 'performed_by', 'edl_name', 'edl_entry', 'action', 'log_message']

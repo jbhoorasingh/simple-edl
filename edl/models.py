@@ -35,3 +35,19 @@ class EdlEntry(models.Model):
 
     def __str__(self):
         return f'{self.edl.name} {self.entry_value}'.lower()
+
+class EdlLog(models.Model):
+    timestamp = models.DateTimeField(auto_now_add=True)
+    performed_by = models.CharField(max_length=50)
+    edl_name =  models.CharField(max_length=50, unique=False)
+    edl_entry =  models.CharField(max_length=200, unique=False, null=True)
+    action = models.CharField(max_length=20)
+    log_message = models.CharField(max_length=200, unique=False, null=True)
+
+
+    class Meta:
+        verbose_name = "External Dynamic List Log"
+        verbose_name_plural = "External Dynamic Logs"
+
+    # def __str__(self):
+    #     return f'{self.edl.name} {self.entry_value}'.lower()

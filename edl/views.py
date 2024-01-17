@@ -6,8 +6,8 @@ from rest_framework import status, permissions
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 from rest_framework.parsers import JSONParser
-from .models import Edl, EdlEntry
-from .serializers import EdlSerializer, EdlEntrySerializer
+from .models import Edl, EdlEntry, EdlLog
+from .serializers import EdlSerializer, EdlEntrySerializer, EdlLogSerializer
 from datetime import datetime
 from urllib.parse import unquote
 
@@ -130,6 +130,9 @@ class ListEdls(APIView):
         serializer = EdlSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+            log = EdlLog(performed_by=request.user, edl_name=data['name'], edl_entry=None, action='edl_create',
+                         log_message="{} was created".format(data['name']))
+            log.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -168,6 +171,9 @@ class ViewEdlDetail(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         edl.delete()
+        log = EdlLog(performed_by=request.user, edl_name=name, edl_entry=None, action='edl_delete',
+                     log_message="{} was deleted".format(name))
+        log.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -217,9 +223,9 @@ class ViewEdlEntries(APIView):
 
         return Response(serializer.data)
 
-    def post(self, request, name):
+    def post(self, request, edl_name):
         try:
-            edl = Edl.objects.get(name=name)
+            edl = Edl.objects.get(name=edl_name)
         except Edl.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -233,12 +239,17 @@ class ViewEdlEntries(APIView):
             serializer = EdlEntrySerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
+                log = EdlLog(performed_by=request.user, edl_name=edl_name, edl_entry=data['entry_value'], action='edl_entry_create',
+                             log_message="{} was added to edl until {}".format(data['entry_value'], data['valid_until']))
+                log.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         # Updating old entry, instead of creating new
         serializer = EdlEntrySerializer(edl_entry, data=data)
         if serializer.is_valid():
             serializer.save()
+            log = EdlLog(performed_by=request.user, edl_name=edl_name, edl_entry=data['entry_value'], action='edl_entry_update',
+                         log_message="{} was updated to edl until {}".format(data['entry_value'], data['valid_until']))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -257,3 +268,20 @@ class ViewEdlEntriesPaFmt(APIView):
             output_string += entry.entry_value + "\n"
         return HttpResponse(output_string, content_type="text/plain")
 
+
+class ViewEdlLogs(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = EdlLogSerializer
+    def get(self, request, edl_name):
+
+        try:
+            edl = Edl.objects.get(name=edl_name)
+        except Edl.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        # Get all entries for this edl
+        logs = EdlLog.objects.filter(edl_name=edl_name).order_by('-timestamp')
+
+        serializer = EdlLogSerializer(logs, many=True)
+
+        return Response(serializer.data)

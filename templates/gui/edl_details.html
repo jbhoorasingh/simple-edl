@@ -93,7 +93,8 @@
                         <!---------->
                         <div class="grid grid-cols-12 gap-4 items-center float-right">
                             <h2 class="text-xl font-semibold col-span-3 ">Entries</h2>
-                            <input v-model="edlEntriesfilters.entry_value" type="text" placeholder="Search by Entry Value"
+                            <input v-model="edlEntriesfilters.entry_value" type="text"
+                                   placeholder="Search by Entry Value"
                                    class="col-span-4 border p-1 text-sm rounded">
 
 
@@ -110,8 +111,6 @@
                         <!---------->
                     </div>
                     <ul>
-                        <!-- Replace with a loop for actual entries -->
-
                         <li v-for="item in edlEntries" :key="item.id" class="block hover:bg-gray-50">
 
                             <div class="flex items-center mt-2 border-t border-gray-100">
@@ -143,12 +142,21 @@
                 <!-- Logs Panel -->
                 <div class="bg-white shadow rounded-lg p-6">
                     <h2 class="text-xl font-semibold mb-2">Logs</h2>
-                    <ul>
-                        <!-- Replace with a loop for actual logs -->
-                        <li>Log 1</li>
-                        <li>Log 2</li>
-                        <!-- ... -->
-                    </ul>
+                    
+                    <ol class="relative border-s border-gray-200 dark:border-gray-700">
+                        <li v-for="(item, index) in edlLogs" :key="item.id" class="ms-4"
+                            :class="{'mb-5': index !== edlLogs.length - 1}">
+                            <div class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"
+                                 :class="{'last_class': index === edlLogs.length - 1}"></div>
+                            <div>
+                                <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+                                    {{ item.timestamp }}
+                                </time>
+                                <p class="mb-5 text-base font-normal text-gray-500 dark:text-gray-400">{{
+                                    item.performed_by }} - {{ item.log_message }}</p>
+                            </div>
+                        </li>
+                    </ol>
                 </div>
 
             </div>
@@ -236,6 +244,7 @@
             el: '#vue-app',
             data: {
                 edlEntries: [],
+                edlLogs: [],
                 showModal: false,
                 edlName: '{{ edl_name }}',
                 edlDetail: {},
@@ -247,11 +256,15 @@
                 },
                 edlEntriesfilters: {
                     entry_value: ''
+                },
+                edlLogsfilters: {
+                    entry_value: ''
                 }
             },
             created() {
                 this.fetchEdl();
                 this.fetchEdlEntries();
+                this.fetchEdlLogs();
             },
             methods: {
 
@@ -267,13 +280,21 @@
                 },
                 fetchEdlEntries() {
                     let queryParams = new URLSearchParams(this.edlEntriesfilters).toString();
-                    console.log(`/api/edl/${this.edlName}/entries?${queryParams}`)
                     fetch(`/api/edl/${this.edlName}/entries?${queryParams}`)
                         .then(response => response.json())
                         .then(data => {
                             this.edlEntries = data;
                         })
                         .catch(error => console.error('Error Fetching EDL Entries:', error));
+                },
+                fetchEdlLogs() {
+                    let queryParams = new URLSearchParams(this.edlLogsfilters).toString();
+                    fetch(`/api/edl/${this.edlName}/logs?${queryParams}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.edlLogs = data;
+                        })
+                        .catch(error => console.error('Error Fetching EDL Logs:', error));
                 },
                 getCookie(name) {
                     let cookieValue = null;
@@ -381,11 +402,12 @@
                             // this.newListErrors.push(`EDL created successfully`);
                             this.showModal = false;
                             this.fetchEdlEntries();
-                            // Clear the form
-                            this.newEntry = {entry_value: '', valid_until: '2045-01-01T00:00', edl: null};
+                            this.fetchEdlLogs();
+
                             // Clear errors
                             this.newEntryErrors = [];
-                            this.newEntry = {entry_value: '', valid_until: '', edl: null};
+                            // Clear the form
+                            this.newEntry = {entry_value: '', valid_until: '2045-01-01T00:00', edl: null};
                         } else if (response.status === 400) {
                             // If status is 400, extract the errors for each field
                             const errors = await response.json(); // Make sure to await the JSON parsing
