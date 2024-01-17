@@ -17,9 +17,9 @@ from django.urls import path
 from .views import ListEdls, ViewEdlDetail, ViewEdlEntries, ViewEdlEntriesPaFmt, ViewEdlLogs
 
 urlpatterns = [
-    path('', ListEdls.as_view()),
-    path('<str:name>', ViewEdlDetail.as_view()),
-    path('<str:edl_name>/entries', ViewEdlEntries.as_view()),
-    path('<str:edl_name>/flat', ViewEdlEntriesPaFmt.as_view()),
-    path('<str:edl_name>/logs', ViewEdlLogs.as_view()),
+    path('', ListEdls.as_view(), name='edl-list'),
+    path('<str:name>', ViewEdlDetail.as_view(), name='edl-detail'),
+    path('<str:edl_name>/entries', ViewEdlEntries.as_view(), name='edl-entries'),
+    path('<str:edl_name>/flat', ViewEdlEntriesPaFmt.as_view(), name='edl-entries-pa-fmt'),
+    path('<str:edl_name>/logs', ViewEdlLogs.as_view(), name='edl-logs'),
 ]
