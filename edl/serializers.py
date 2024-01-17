@@ -25,7 +25,7 @@ class EdlEntrySerializer(serializers.ModelSerializer):
         # Todo:: Improve validation - URL should support wildcard
         # Todo:: Ensure valid_til field is in the future
         if data["edl"].edl_type == 'ip_address':
-            if not validators.ipv4(data['entry_value']):
+            if not validators.ipv4(data['entry_value'], cidr=True):
                 raise serializers.ValidationError("entry_value is not a valid ipv4 address")
         if data["edl"].edl_type == 'url':
             if not validators.url(data['entry_value']):
