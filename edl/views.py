@@ -10,6 +10,7 @@ from .models import Edl, EdlEntry, EdlLog
 from .serializers import EdlSerializer, EdlEntrySerializer, EdlLogSerializer
 from datetime import datetime
 from urllib.parse import unquote
+from django.utils import timezone
 
 class ListEdls(APIView):
     """
@@ -263,8 +264,11 @@ class ViewEdlEntriesPaFmt(APIView):
             return HttpResponse("list_does_not_exist", content_type="text/plain")
 
         output_string = ""
-        print(edl.entries.all())
-        for entry in edl.entries.all():
+        current_time = timezone.now()
+        valid_entries = edl.entries.filter(valid_until__gt=current_time)  # Filter out expired entries
+
+        # print(edl.entries.all())
+        for entry in valid_entries.all():
             output_string += entry.entry_value + "\n"
         return HttpResponse(output_string, content_type="text/plain")
 
