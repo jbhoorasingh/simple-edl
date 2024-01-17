@@ -31,8 +31,18 @@
                             <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                 <dt class="text-sm font-medium leading-6 text-gray-900">Flat URL</dt>
                                 <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    <a :href="'/api/edl/' + edlDetail.name + '/flat'" target="_blank">/api/edl/{{
-                                        edlDetail.name }}/flat</a>
+                                    <div class="input-group">
+                                        <input ref="flatUrl" v-model="flatUrl" readonly
+                                               class="input-group-field block w-full border p-1 text-sm rounded w-auto">
+                                        <button @click="copyFlatUrl" class="input-group-button mr-5 float-right">
+                                            <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                                        </button>
+                                        <button @click="goToFlatUrl" class="input-group-button mr-5 float-right">
+                                            <i class="fa fa-arrow-right" aria-hidden="true"></i> Navigate
+                                        </button>
+                                    </div>
+                                    <!--<a :href="'/api/edl/' + edlDetail.name + '/flat'" target="_blank">/api/edl/{{
+                                        edlDetail.name }}/flat</a>-->
                                 </dd>
                             </div>
                             <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -142,7 +152,7 @@
                 <!-- Logs Panel -->
                 <div class="bg-white shadow rounded-lg p-6">
                     <h2 class="text-xl font-semibold mb-2">Logs</h2>
-                    
+
                     <ol class="relative border-s border-gray-200 dark:border-gray-700">
                         <li v-for="(item, index) in edlLogs" :key="item.id" class="ms-4"
                             :class="{'mb-5': index !== edlLogs.length - 1}">
@@ -245,6 +255,7 @@
             data: {
                 edlEntries: [],
                 edlLogs: [],
+                flatUrl: `{{ request.scheme }}://{{ request.get_host }}/api/edl/{{ edl_name }}/flat`,
                 showModal: false,
                 edlName: '{{ edl_name }}',
                 edlDetail: {},
@@ -431,6 +442,17 @@
                         this.newEntryErrors.push('Network error or API is down');
                         console.error('Error during fetch:', error);
                     }
+                },
+                copyFlatUrl() {
+                    // This function copies the Flat URL to the clipboard
+                    const input = this.$refs.flatUrl;
+                    input.select();
+                    document.execCommand('copy');
+                },
+                goToFlatUrl() {
+                    // This function navigates to the Flat URL
+                    const url = this.flatUrl;
+                    window.open(url, '_blank');
                 }
             }
         });
