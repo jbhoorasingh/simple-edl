@@ -44,6 +44,11 @@ class EdlEntrySerializer(serializers.ModelSerializer):
             if value.startswith(('http://', 'https://')):
                 raise serializers.ValidationError("Do not prefix the domain name with the protocol (http or https).")
 
+            # Check for invalid use of start character
+            if value.startswith(('.',)):
+                raise serializers.ValidationError(
+                    "Do not prefix the domain name with dot.")
+
             # Validate the use of wildcards and exact match characters
             if '*' in value and any(char in value for char in '/ ? & = ; + ^'):
                 raise serializers.ValidationError("Wildcard characters must be the only character within a token.")
