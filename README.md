@@ -20,7 +20,7 @@ Any data entered into the live demo will be deleted every 24 hours.
 
 | Demo Site | Username | Password |
 |----------|----------|----------|
-| demo1.simpleedl.com | demouser1 | bl3buS1tEnTEmEKT1n |
+| http://demo1.simpleedl.com/gui/ | demouser1 | bl3buS1tEnTEmEKT1n |
 
 If you are thinking about trying this out - please consider using the Digital Ocean referral link below. You will get $200 credit for 60 days, and I will get $25 credit to help run this demo.
 
