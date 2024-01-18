@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  migration:
+    build: .
+    depends_on:
+      - db
+    command: python manage.py migrate --noinput
+    volumes:
+      - ./:/usr/src/app/
+    env_file:
+      - ./.env
+  web:
+    build: .
+    depends_on:
+      - db
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - '8000:8000'
+    env_file:
+      - ./.env
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.db
+
+volumes:
+  postgres_data:

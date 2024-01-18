@@ -10,6 +10,7 @@ cssselect2==0.7.0
 decorator==5.1.1
 Django==4.1.2
 django-filer==2.2.3
+django-jazzmin==2.6.0
 django-js-asset==2.0.0
 django-mptt==0.14.0
 django-polymorphic==3.1.0
@@ -18,6 +19,7 @@ djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
 drf-spectacular==0.24.2
 easy-thumbnails==2.8.3
+gunicorn==21.2.0
 idna==3.4
 inflection==0.5.1
 itypes==1.2.0
@@ -28,6 +30,7 @@ Markdown==3.4.1
 MarkupSafe==2.1.1
 packaging==21.3
 Pillow==9.2.0
+psycopg2-binary==2.9.9
 pycparser==2.21
 PyJWT==2.6.0
 pyparsing==3.0.9
