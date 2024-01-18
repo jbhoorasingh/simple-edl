@@ -1,3 +1,7 @@
 /db.sqlite3
 /venv/
 .idea
+.env
+.env.db
+.env.prod
+.env.db.prod

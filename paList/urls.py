@@ -18,10 +18,10 @@ from django.urls import path, include, re_path
 from django.contrib.auth import views as auth_views
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-
+from django.conf import settings
+import os
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('api/edl/', include('edl.urls')),
     path('gui/', include('gui.urls')),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
@@ -38,4 +38,13 @@ urlpatterns = [
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
+
 ]
+
+# if settings.DEBUG:
+#     urlpatterns += [
+#         path('admin/', admin.site.urls),
+#     ]
+    # Serve media files through Django during development
+    # from django.conf.urls.static import static
+    # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
