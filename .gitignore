@@ -5,3 +5,5 @@
 .env.db
 .env.prod
 .env.db.prod
+__pycache__/
+*.pyc
