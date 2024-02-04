@@ -1,6 +1,10 @@
 version: '3.8'
 
 services:
+  redis:
+    image: "redis:7.2-alpine"
+    volumes:
+      - "redis:/data"
   migration:
     build: .
     depends_on:
@@ -21,6 +25,41 @@ services:
       - '8000:8000'
     env_file:
       - ./.env
+  beat:
+    build: .
+    depends_on:
+      - redis
+      - db
+      - migration
+    command: python -m celery -A paList  beat
+    volumes:
+      - ./:/usr/src/app/
+    env_file:
+      - ./.env
+  worker:
+    build: .
+    depends_on:
+      - redis
+      - db
+      - migration
+    command: python -m celery -A paList  worker
+    volumes:
+      - ./:/usr/src/app/
+    env_file:
+      - ./.env
+  flower:
+    build: .
+    depends_on:
+      - redis
+      - db
+      - migration
+    command: python -m celery -A paList  flower
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - "5555:5555"
+    env_file:
+      - ./.env
   db:
     image: postgres:13.0-alpine
     volumes:
@@ -30,3 +69,4 @@ services:
 
 volumes:
   postgres_data:
+  redis: {}
